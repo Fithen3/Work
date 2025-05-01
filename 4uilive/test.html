@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site with Overlay Sidebar and Banner</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #0f0f0f;
+    }
+
+    /* Header with blur effect */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 75px;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+
+    /* When scrolled, increase opacity and blur */
+    .header.scrolled {
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+    }
+
+    .nickname {
+      color: white;
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 16px;
+    }
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 4px;
+      background-color: #444;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .currency {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .currency-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+    }
+
+    .currency-value {
+      color: white;
+      font-size: 16px;
+    }
+
+    /* Sidebar styles - now overlays content */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      background-color: #111;
+      z-index: 1000; /* Higher than header to overlay everything */
+      transition: width 0.3s ease;
+      width: 75px; /* Changed from 60px to 75px as requested */
+      overflow: hidden;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
+    }
+
+    .sidebar:hover {
+      width: 200px;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      height: 75px; /* Match the header height as requested */
+      padding: 0 16px;
+      border-bottom: 1px solid #222;
+    }
+
+    .sidebar-logo {
+      width: 40px; /* Increased size to look better in the taller header */
+      height: 40px; /* Increased size to look better in the taller header */
+      border-radius: 4px;
+      overflow: hidden;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .sidebar-title {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar:hover .sidebar-title {
+      opacity: 1;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-menu li {
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      color: white;
+      text-decoration: none;
+      transition: background-color 0.2s;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: #222;
+    }
+
+    .sidebar-menu .icon {
+      width: 43px; /* Adjusted to center icons in the wider sidebar */
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-menu .text {
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar:hover .sidebar-menu .text {
+      opacity: 1;
+    }
+
+    /* Content area with banner */
+    .content {
+      padding-top: 75px; /* Match header height */
+      min-height: 100vh;
+    }
+
+    /* Banner styles */
+    .banner {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 75px); /* Full viewport height minus header */
+      overflow: hidden;
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+    }
+
+    .banner-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .banner:hover .banner-image {
+      transform: scale(1.05);
+    }
+
+    .banner-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 40px;
+    }
+
+    .banner-title {
+      color: white;
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .banner-description {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin-bottom: 24px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .banner-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      font-size: 1rem;
+      text-decoration: none;
+    }
+
+    .banner-button:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img src="https://i.pravatar.cc/100" alt="ValCup.gg">
+      </div>
+      <div class="sidebar-title">ValCup.gg</div>
+    </div>
+    <ul class="sidebar-menu">
+      <li>
+        <a href="#">
+          <div class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </div>
+          <span class="text">Главная</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <div class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+              <path d="M4 22h16"></path>
+              <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+              <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+            </svg>
+          </div>
+          <span class="text">Турниры</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <div class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <span class="text">Медиа</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <div class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="4" r="2"></circle>
+              <path d="M15 7H9L5 21h14L15 7z"></path>
+            </svg>
+          </div>
+          <span class="text">Топ</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <div class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <span class="text">FAQ</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <div class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+          </div>
+          <span class="text">Магазин</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Header with blur effect -->
+  <header class="header" id="header">
+    <div class="header-content">
+      <div class="nickname">Никнейм</div>
+      <div class="avatar">
+        <img src="https://i.pravatar.cc/150" alt="User avatar">
+      </div>
+      <div class="currency">
+        <div class="currency-icon">$</div>
+        <span class="currency-value">1999</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="offer"></div>
+
+  <!-- <script>
+    // Simple script to detect scrolling and add a class to the header
+    const header = document.getElementById('header');
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 10) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+  </script> -->
+</body>
+</html>
