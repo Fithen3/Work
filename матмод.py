@@ -1,4 +1,4 @@
-Ильяс, [18.12.2025 7:21]
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -130,7 +130,7 @@ if 'owners' in df.columns:
 
 print("Предобработка завершена!")
 
-Ильяс, [18.12.2025 7:21]
+
 # ============================================================================
 # 3. СРЕДНЯЯ СТОИМОСТЬ ИГР
 # ============================================================================
@@ -235,7 +235,7 @@ if 'release_year' in df.columns:
         'Год': games_by_year.index,
         'Количество игр': games_by_year.values
 
-Ильяс, [18.12.2025 7:21]
+
 })
     
     print("Топ-10 лет по выпуску игр:")
@@ -337,7 +337,7 @@ if 'release_year' in df.columns and 'genres' in df.columns and 'price' in df.col
     def split_genres(genre_str):
         if pd.isna(genre_str) or genre_str == 'Unknown':
 
-Ильяс, [18.12.2025 7:21]
+
 return []
         return [g.strip() for g in str(genre_str).split(';')]
     
@@ -445,7 +445,6 @@ if 'platforms' in df.columns:
         'Платформа': list(platform_counts.keys()),
         'Количество': list(platform_counts.values())
 
-Ильяс, [18.12.2025 7:21]
 }).sort_values('Количество', ascending=False)
     
     print("Поддержка платформ:")
@@ -528,4 +527,5 @@ print("Очищенные данные сохранены в 'steam_cleaned.csv'
 
 print("\n" + "=" * 60)
 print("АНАЛИЗ ЗАВЕРШЕН!")
+
 print("=" * 60)
