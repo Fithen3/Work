@@ -1,4 +1,4 @@
-Ильяс, [18.12.2025 7:23]
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -125,7 +125,7 @@ if 'genres' in df.columns:
     plt.tight_layout()
     plt.show()
 
-Ильяс, [18.12.2025 7:23]
+
 # 9. Игры с ≥99% положительных отзывов
 if 'positive_ratings' in df.columns and 'negative_ratings' in df.columns:
     df['total_ratings'] = df['positive_ratings'] + df['negative_ratings']
@@ -172,4 +172,5 @@ except:
 
 # Сохраняем результаты
 df.to_csv('steam_cleaned.csv', index=False)
+
 print("\nОчищенные данные сохранены в 'steam_cleaned.csv'")
